@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "fit-hub-staging",
+  "private_key_id": "6e60bc40c82d199dbd3795e6904ec46ab14274cb",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCOVw6zfPQYIvPr\nr569+8uPirrMHpZz3icZ3W0LK+oVtVGLvNadOyzMl/2XKPXn9AXNkYUnY75J4rSU\nG1KeZWeraX0KXKs/zxOYsPzknCrHmRzq9gyYkS1EYKwUniBPTf7inNtSib1tWb2p\nx/f3pFcdqegjhUVprEHpsCTLZL8bC4m7p1ELSDSm6a7Rz/Dz7qFAP3/X0iABMk1B\nsXdi8ddeHQFGjLSZK0k+TZNZ5ad9YYT86AEy9svZRXBz1zCS4mv0yThSt79A4d8V\ncNVKzAQiul3nm9Zogon4n2kTsjTVI2jG0eDJlT93goY16RpOzSJ/OupsyBKV1ENP\nHQ4MhqbtAgMBAAECggEAMVUm+Tpjd0IV/CegAwST5qoUV856IqpqLuK5ele8B84R\n9zZ5w4DQ5BABijReFghTQo4e8in1t7HlGDfoCJHovlYPSloX2EOy7Qbaf3lIsmj0\nxtKERxR59erzeSnc1N+ZaX0n3pFyn8WsoH14CdJhhxxuInF8P0W+innMJtpCCeMP\ng/SFrDinGROGGrYnHlUpiaam6pbmYtlIhaOpQG31hyf3AP6Q8jGy8nY10FFFyaDa\n1t6CpY5WX3UbU/t+QL+Q/6TJ2F5ASI5jDT8cx3GdQ+0nhQTaox7449TL1h4NRcvs\nN0Gq7yDmN1exVImsZ+OMV3Ll7dAsYganc0d/OjW42QKBgQDAsp6chdYc4kjgCurd\nDkBMvMr2vXbaWOXm/+c9MClnygPAXJeol59OJMjoXfN2sYYNhUvKNoKLAafJ3DqB\nyavVgshdIn7jvZQ7eF6aQw+CBA73yJ+ca0JWv+EuDPXCKVwJXFh9bNxmhaDA9fZK\nD0r3RqOGWvgJj8fjqxSmnYl5cwKBgQC9GX0W4e2r0k268CRrmXGPhGCUijU2LKnz\nzhtMQLjnzO4+RAlbbrqbDMq+yrn4xXiM/0UwVfQ4ZEGJ6FhhYH0wgCOZD+Wgzn44\nQQ5rvEOcrbBAYprDLNEphRfyufwWqOFLf6/M5BVoqiJpNi1GTRQqVKnnef8qpx2l\nYkUC8sbGHwKBgFbeLvKQwv0yZXfadBZDHml5kmW486Nq//kq06uZ0pCfWSGWnCe8\ncmxf2NInyGFxleTyekAmYqMXk/RD+3wW1gfidUDHFDzGcdR9ZuhT4uHRwo2hO5Lg\nJ3/D8Fc6MG/fBUaTArFIKfNtuhJCz0yDqF/g0Eb5K2fkEVBpB141FoxRAoGAdzcr\ngpKbCTkDojglbeSGEInPbbYYR/guiTNGSHOBXzn2dTDliUwsvvV4mIIsbqboElQY\n5Zk655ZlLzFZDsMLCdmvF59LEG8+ae6xzcAaDBwAQwcnNKb7kqaC65bPU+XSa4ur\nZIvi52JjYVszfd+4N9u6ZeGmudgzu4FRqsMuB9cCgYEAjudHhTzXNr8FZO87rTJf\nshtEb0ldt9zYKVIGRNYYmSOYv8BBail45cqED0nIr6w+3URzAldRZJeO3BOofXe/\nzNnO2cFIPNbT2kK35X2qK0MadS5mCW8eYNdsYh9gRPRnjMQs0pIMhBXbXJZxL9/Q\nJLcKHyFQmWnaTPapTKsE0w4=\n-----END PRIVATE KEY-----\n",
+  "client_email": "gke-staging@fit-hub-staging.iam.gserviceaccount.com",
+  "client_id": "117276602837292481938",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/gke-staging%40fit-hub-staging.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

@@ -1,0 +1,7 @@
+- egressTo:
+    operations:
+    - serviceName: \"*\"
+    resources:
+    - \"*\"
+  egressFrom:
+    identityType: ANY_IDENTITY | ANY_USER_ACCOUNT | ANY_SERVICE_ACCOUNT

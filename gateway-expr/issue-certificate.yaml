@@ -1,0 +1,12 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: test
+spec:
+  secretName: test-tls
+  issuerRef:
+    kind: ClusterIssuer
+    name: cloud-dns-issuer
+  dnsNames:
+  - test.svc.staging.fithubdev.com

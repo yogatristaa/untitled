@@ -1,0 +1,11 @@
+- ingressFrom:
+    identityType: ANY_IDENTITY | ANY_USER_ACCOUNT | ANY_SERVICE_ACCOUNT
+    sources:
+    - resource: projects/418407738310
+  ingressTo:
+    operations:
+    - serviceName: \"*\"
+    resources:
+    - \"*\"
+
+    

@@ -1,6 +1,6 @@
 [master]
-192.168.0.129 ansible_port=22 ansible_password=ubuntu
+192.168.0.129 ansible_port=22 ansible_user=ubuntu ansible_ssh_common_args='-o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts'
 
 [nodes]
-192.168.0.131 ansible_port=22 ansible_password=ubuntu
-192.168.0.134 ansible_port=22 ansible_password=ubuntu
+192.168.0.131 ansible_port=22 ansible_user=ubuntu ansible_ssh_common_args='-o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts'
+192.168.0.134 ansible_port=22 ansible_user=ubuntu ansible_ssh_common_args='-o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts'

@@ -79,11 +79,25 @@
   when: inventory_hostname == "192.168.0.129"
   become: yes
 
-- name: Fetch join command from master
-  fetch:
-    src: /kubeadm_join_command.sh
-    dest: /kubeadm_join_command.sh
-    flat: yes
+- name: Ensure join command file exists
+  stat:
+    path: /tmp/kubeadm_join_command.sh
+  register: join_command_file
+  when: inventory_hostname == "192.168.0.129"
+  become: yes
+
+- name: Set proper permissions on join command file
+  file:
+    path: /tmp/kubeadm_join_command.sh
+    owner: root
+    group: root
+    mode: '0644'
+  when: inventory_hostname == "192.168.0.129" and join_command_file.stat.exists
+  become: yes
+
+- name: Debug join command file status
+  debug:
+    var: join_command_file
   when: inventory_hostname == "192.168.0.129"
 
 - name: Copy join command file to worker nodes

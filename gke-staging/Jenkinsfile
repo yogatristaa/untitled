@@ -1,0 +1,287 @@
+ pipeline {
+    //Agent Type to Use
+    agent { label 'my-agent' }
+    
+    stages {
+        stage('Clean Before Build') {
+            steps {
+                //Clean Before Starting Jobs
+                cleanWs()
+            }
+        }
+        
+        stage('Checkout') {
+            steps {
+                // Checkout Repository
+                dir('Repository-Name'){
+                    git url: 'https://repository-domain.com/username/repository',
+                    credentialsId: 'credentials-of-repository',
+                    branch: 'branch-to-checkout'
+                }
+            }
+        }
+        
+        stage('Get Secret or Needed Config Files') {
+            steps {
+                script {
+                    dir('Repository-Name'){
+                        withCredentials([file(credentialsId: 'credential-to-use', variable: 'KEY')]) {
+                            //Command to execute
+                            sh("echo "using ${KEY}" ")
+                        }                            
+                    }
+                }
+            }
+        }
+        
+        stage('Function Deployment') {
+            steps {
+                sh 'bash .fh/golang/deploy-golang-TBD.sh'
+            }
+        }
+        
+        stage ('Run Swagger') {
+            when {
+                expression { targetbranch == 'main' }
+            }
+            environment {
+                GOOGLE_APPLICATION_CREDENTIALS = "${STAGING_CREDENTIALS}"
+            }
+            steps {
+                sh 'cd BACKEND-GOLANG && export PATH=/usr/local/bin:$PATH && export GOROOT=/usr/local/go && export GOPATH=$HOME/go && export PATH=$GOPATH/bin:$GOROOT/bin:$PATH && go install github.com/swaggo/swag/cmd/swag@latest && make api-docs'
+            }
+        }
+        
+        stage('Run Unit Test') {
+            steps {
+                script {
+                    dir('BACKEND-GOLANG') {
+                        def unitTestOutput = sh script: "bash $WORKSPACE/.fh/golang/unit-test.sh", returnStdout: true
+                        def testOutput = unitTestOutput.tokenize('\n').last()
+                        env.hasFailOrError = testOutput
+                        sh 'echo "------make test------" '
+                        sh "cat make-test-log.txt"
+                    }
+                }
+            }
+        }
+        
+        stage('Sonar Scan'){
+            steps{
+                script{
+                    dir('BACKEND-GOLANG') {
+                        sh '''
+                        export SONAR_SCANNER_VERSION=5.0.1.3006 &&
+                        export SONAR_SCANNER_HOME=$HOME/.sonar/sonar-scanner-$SONAR_SCANNER_VERSION-linux &&
+                        curl --create-dirs -sSLo $HOME/.sonar/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_SCANNER_VERSION-linux.zip &&
+                        unzip -o $HOME/.sonar/sonar-scanner.zip -d $HOME/.sonar/ &&
+                        export PATH=$SONAR_SCANNER_HOME/bin:$PATH &&
+                        export SONAR_SCANNER_OPTS="-server" &&
+                        sudo apt-get update &&
+                        sudo apt-get install jq -y &&
+                        git branch &&
+                        sonar-scanner -Dsonar.organization=fit-hub-indonesia -Dsonar.projectKey=FIT-HUB-INDONESIA_BACKEND-GOLANG -Dsonar.sources=. -Dsonar.tests=. -Dsonar.exclusions=**/mock/** -Dsonar.test.inclusions=**/*_test.go -Dsonar.coverage.exclusions=**/*_test.go -Dsonar.go.coverage.reportPaths=coverage.out -Dsonar.host.url=https://sonarcloud.io | tee -a $WORKSPACE/.fh/golang/sonar-scan.log
+                        '''
+                        
+                    }
+                }
+            }
+        }
+        
+        stage('Send PR Performance to DB'){
+            steps {
+                script {
+                    dir('.fh') {
+                        withCredentials([file(credentialsId: '6d987ae9-1cd1-4eef-8dbd-2f6aca9aa992', variable: 'GC_KEY')]) {
+                            sh("gcloud auth activate-service-account --key-file=${GC_KEY}")
+                            sh("gsutil cp -r 'gs://staging-workflow/backend-golang/code-performance/.env' '$WORKSPACE/.fh/golang/.env'")
+                        }  
+                        sh """
+                            pip3 install pymysql load_dotenv
+                            chmod +x $WORKSPACE/.fh/golang/codePerformanceOnMerged &&
+                            cd $WORKSPACE/.fh/golang/ &&
+                            ls -liah &&
+                            ./codePerformanceOnMerged $pr_number
+                        """
+                    }
+                }
+            }
+        }
+        
+    }
+    
+    
+    post {
+        success {
+            script {
+                echo "success"
+                def slckmsg = readFile(file: "${WORKSPACE}/.tmpr/msg2slack.txt")
+                slackSend(
+                    botUser: true,
+                    channel: 'engineering-deployment',
+                    color: 'good',
+                    message: slckmsg,
+                    tokenCredentialId: 'de851b98-eb2c-456d-a433-d1c35dfc4b76' )
+                println(slckmsg)
+                cleanWs(cleanWhenNotBuilt: true,
+                    deleteDirs: true,
+                    disableDeferredWipeout: true,
+                    notFailBuild: true)
+            }
+        }
+        failure {
+            script {
+                echo "failure"
+                def slckmsg = readFile(file: "${WORKSPACE}/.tmpr/msg2slack.txt")
+                slackSend(
+                    botUser: true,
+                    channel: 'engineering-deployment',
+                    color: 'danger',
+                    message: slckmsg,
+                    tokenCredentialId: 'de851b98-eb2c-456d-a433-d1c35dfc4b76' )
+                println(slckmsg)
+                cleanWs(cleanWhenNotBuilt: true,
+                    deleteDirs: true,
+                    disableDeferredWipeout: true,
+                    notFailBuild: true)
+            }
+        }
+    }
+}
+
+ pipeline {
+    agent { label 'ubuntu-2004' }
+    
+    options {
+        timeout(time: 10, unit: 'MINUTES')
+    }
+    
+    environment {
+        STAGING_CREDENTIALS = credentials('6d987ae9-1cd1-4eef-8dbd-2f6aca9aa992')
+        SONAR_TOKEN = credentials('fcaf2e70-908f-4810-9c36-d0770c6be552')
+        APP_ID = '464217'
+        TOKEN = credentials('0a7daf53-30f4-4678-997f-81ec1225074b')
+    }
+    
+    stages {
+        stage('Clean Before Build') {
+            steps {
+                //Clean Before Starting Jobs
+                cleanWs()
+            }
+        }
+        
+        stage('Checkout') {
+            steps {
+                script {
+                    sh "echo $action"
+                    dir('BACKEND-GOLANG'){
+                        git url: 'https://github.com/FIT-HUB-INDONESIA/BACKEND-GOLANG',
+                        credentialsId: '0a7daf53-30f4-4678-997f-81ec1225074b',
+                        branch: '$headbranch'
+                    }
+                    dir('.fh') {
+                        git url: 'https://github.com/FIT-HUB-INDONESIA/.fh',
+                        credentialsId: '0a7daf53-30f4-4678-997f-81ec1225074b',
+                        branch: 'main'
+                    }
+                }
+            }
+        }
+        
+        stage('Run Unit Test') {
+            steps {
+                script {
+                    dir('BACKEND-GOLANG') {
+                        def unitTestOutput = sh script: "bash /tmp/workspace/golang-unit-test/.fh/golang/unit-test.sh", returnStdout: true
+                        def testOutput = unitTestOutput.tokenize('\n').last()
+                        env.hasFailOrError = testOutput
+                        sh 'echo "------make test------" '
+                        sh "cat make-test-log.txt"
+                    }
+                }
+            }
+        }
+        
+        stage('Send GitHub Checks') {
+            steps {
+                script {
+                    sh "echo $commitbase"
+                    sh "echo $hasFailOrError"
+                    
+                    if (hasFailOrError == 'false') {
+                        sh """
+                            curl -L -X POST \
+                            -H "Accept: application/vnd.github+json" \
+                            -H "Authorization: Bearer $TOKEN_PSW" \
+                            -H "X-GitHub-Api-Version: 2022-11-28" \
+                            https://api.github.com/repos/FIT-HUB-INDONESIA/BACKEND-GOLANG/statuses/$commithead \
+                            -d '{"state":"success","target_url":"$BUILD_URL","description":"Unit Test Passed","context":"Golang Unit Test/Jenkins"}'
+                        """
+                    } else {
+                        sh """
+                            curl -L -X POST \
+                            -H "Accept: application/vnd.github+json" \
+                            -H "Authorization: Bearer $TOKEN_PSW" \
+                            -H "X-GitHub-Api-Version: 2022-11-28" \
+                            https://api.github.com/repos/FIT-HUB-INDONESIA/BACKEND-GOLANG/statuses/$commithead \
+                            -d '{"state":"failure","target_url":"$BUILD_URL","description":"Unit Test not Passed","context":"Golang Unit Test/Jenkins"}'
+                        """
+                    }
+                }
+            }
+        }
+        
+        stage('Sonar Scan'){
+            steps{
+                script{
+                    dir('BACKEND-GOLANG') {
+                        sh '''
+                        export SONAR_SCANNER_VERSION=5.0.1.3006 &&
+                        export SONAR_SCANNER_HOME=$HOME/.sonar/sonar-scanner-$SONAR_SCANNER_VERSION-linux &&
+                        curl --create-dirs -sSLo $HOME/.sonar/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_SCANNER_VERSION-linux.zip &&
+                        unzip -o $HOME/.sonar/sonar-scanner.zip -d $HOME/.sonar/ &&
+                        export PATH=$SONAR_SCANNER_HOME/bin:$PATH &&
+                        export SONAR_SCANNER_OPTS="-server" &&
+                        sudo apt-get update &&
+                        sudo apt-get install jq -y &&
+                        git branch &&
+                        sonar-scanner -Dsonar.organization=fit-hub-indonesia -Dsonar.projectKey=FIT-HUB-INDONESIA_BACKEND-GOLANG -Dsonar.sources=. -Dsonar.tests=. -Dsonar.exclusions=**/mocks/** -Dsonar.test.inclusions=**/*_test.go -Dsonar.coverage.exclusions=**/*_test.go,**/mocks/** -Dsonar.go.coverage.reportPaths=coverage.out -Dsonar.host.url=https://sonarcloud.io -Dsonar.pullrequest.base=$targetbranch -Dsonar.pullrequest.branch=$headbranch -Dsonar.pullrequest.key=$prnumber -Dsonar.pullrequest.provider=GitHub | tee -a $WORKSPACE/.fh/golang/sonar-scan.log
+                        '''
+                        
+                    }
+                }
+            }
+        }
+        
+        stage('Send PR Performance to DB'){
+            steps {
+                script {
+                    dir('.fh') {
+                        withCredentials([file(credentialsId: '6d987ae9-1cd1-4eef-8dbd-2f6aca9aa992', variable: 'GC_KEY')]) {
+                            sh("gcloud auth activate-service-account --key-file=${GC_KEY}")
+                            sh("gsutil cp -r 'gs://staging-workflow/backend-golang/code-performance/.env' '$WORKSPACE/.fh/golang/.env'")
+                        }  
+                        sh """
+                            pip3 install pymysql uuid pytz load_dotenv
+                            chmod +x $WORKSPACE/.fh/golang/codePerformance &&
+                            cd $WORKSPACE/.fh/golang/ &&
+                            ls -liah &&
+                            ./codePerformance $committer $updated_at
+                        """
+                    }
+                }
+            }
+        }
+        
+    }
+    
+    post {
+        success {
+            cleanWs(cleanWhenNotBuilt: true, deleteDirs: true, disableDeferredWipeout: true, notFailBuild: true)
+        }
+        failure {
+            cleanWs(cleanWhenNotBuilt: true, deleteDirs: true, disableDeferredWipeout: true, notFailBuild: true)
+        }
+    }
+}

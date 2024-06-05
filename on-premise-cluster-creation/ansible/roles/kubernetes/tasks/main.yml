@@ -4,6 +4,22 @@
     state: present
   become: yes
 
+- name: Add Kubernetes APT repository
+  apt_repository:
+    repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+    state: present
+    filename: kubernetes.list
+
+- name: Add Kubernetes apt key
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+
 - name: Install Kubernetes components
   apt:
     name:

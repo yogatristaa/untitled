@@ -1,6 +1,6 @@
 [master]
-192.168.0.129
+192.168.0.129 ansible_port=22 ansible_password=ubuntu
 
 [nodes]
-192.168.0.126
-192.168.0.127
+192.168.0.131 ansible_port=22 ansible_password=ubuntu
+192.168.0.134 ansible_port=22 ansible_password=ubuntu

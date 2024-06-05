@@ -79,6 +79,13 @@
   when: inventory_hostname == "192.168.0.129"
   become: yes
 
+- name: Fetch join command from master
+  fetch:
+    src: /tmp/kubeadm_join_command.sh
+    dest: /tmp/kubeadm_join_command.sh
+    flat: yes
+  when: inventory_hostname == "192.168.0.129"
+
 - name: Copy join command file to worker nodes
   copy:
     src: /tmp/kubeadm_join_command.sh

@@ -1,0 +1,39 @@
+- name: Install Docker
+  apt:
+    name: docker.io
+    state: present
+  become: yes
+
+- name: Install Kubernetes components
+  apt:
+    name:
+      - kubelet
+      - kubeadm
+      - kubectl
+    state: present
+  become: yes
+
+- name: Initialize Kubernetes Master
+  shell: |
+    kubeadm init --apiserver-advertise-address={{ ansible_host }} --pod-network-cidr=192.168.0.0/16
+  when: inventory_hostname == "192.168.0.129"
+  become: yes
+
+- name: Set up kubeconfig for root
+  shell: |
+    mkdir -p $HOME/.kube
+    cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+    chown $(id -u):$(id -g) $HOME/.kube/config
+  when: inventory_hostname == "192.168.0.129"
+  become: yes
+
+- name: Install Calico network plugin
+  shell: |
+    kubectl apply -f https://docs.projectcalico.org/v3.14/manifests/calico.yaml
+  when: inventory_hostname == "192.168.0.129"
+  become: yes
+
+- name: Join worker nodes to cluster
+  shell: "{{ hostvars['192.168.0.129']['join_command'] }}"
+  when: inventory_hostname != "192.168.0.1290"
+  become: yes

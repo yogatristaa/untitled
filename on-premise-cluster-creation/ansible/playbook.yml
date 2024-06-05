@@ -1,0 +1,6 @@
+- hosts: all
+  become: yes
+  vars:
+    ansible_ssh_pass: ubuntu
+  roles:
+    - kubernetes

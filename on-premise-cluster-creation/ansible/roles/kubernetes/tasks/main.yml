@@ -4,9 +4,11 @@
     state: present
   become: yes
 
-- name: Ensure apt-transport-https is installed
+- name: Ensure apt-transport-https and curl are installed
   apt:
-    name: apt-transport-https
+    name:
+      - apt-transport-https
+      - curl
     state: present
 
 - name: Create directory for apt keyrings
@@ -15,10 +17,13 @@
     state: directory
     mode: '0755'
 
-- name: Add Kubernetes signing key
-  command: >
-    curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key |
-    gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+- name: Download Kubernetes signing key
+  command: curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key -o /tmp/Release.key
+  args:
+    creates: /tmp/Release.key
+
+- name: Convert Kubernetes signing key to gpg format
+  command: gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg /tmp/Release.key
   args:
     creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 

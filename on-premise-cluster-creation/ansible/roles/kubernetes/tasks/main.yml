@@ -75,7 +75,7 @@
 - name: Save join command to a file on master
   copy:
     content: "{{ join_command.stdout }}"
-    dest: /kubeadm_join_command.sh
+    dest: /tmp/kubeadm_join_command.sh
   when: inventory_hostname == "192.168.0.129"
   become: yes
 
@@ -102,12 +102,12 @@
 
 - name: Copy join command file to worker nodes
   copy:
-    src: /kubeadm_join_command.sh
-    dest: /kubeadm_join_command.sh
+    src: /tmp/kubeadm_join_command.sh
+    dest: /tmp/kubeadm_join_command.sh
   when: inventory_hostname != "192.168.0.129"
   become: yes
 
 - name: Join worker nodes to cluster
-  shell: bash /kubeadm_join_command.sh
+  shell: bash /tmp/kubeadm_join_command.sh
   when: inventory_hostname != "192.168.0.129"
   become: yes

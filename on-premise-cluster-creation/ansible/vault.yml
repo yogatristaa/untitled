@@ -1,0 +1,5 @@
+# vault.yml
+ansible_sudo_passwords:
+  master: "ubuntu"
+  node1: "ubuntu"
+  node2: "ubuntu"

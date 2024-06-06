@@ -79,8 +79,7 @@
   when: inventory_hostname == "192.168.0.136"
   become: yes
 
-- name: Create file with join command
-  template:
-    src: join_command.sh.j2
-    dest: /opt/kubernetes/join_command.sh
+- name: Print join command
+  debug:
+    var: join_command.stdout
   when: join_command is defined

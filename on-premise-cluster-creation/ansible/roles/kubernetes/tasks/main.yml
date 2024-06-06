@@ -80,7 +80,7 @@
   become: yes
 
 - set_fact:
-    kubeadm_join: "{{ join_command.stdout_lines[0] }}"
+    kubeadm_join: "{{ join_command.stdout }}"
 
 - name: Run kubeadm join
   shell: "{{ hostvars['master'].kubeadm_join }} >> node_joined.txt"

@@ -79,23 +79,10 @@
   when: inventory_hostname == "192.168.0.136"
   become: yes
 
-- name: Save join command to a file on master
-  copy:
-    content: "{{ join_command.stdout }}"
-    dest: /opt/kubernetes/kubeadm_join_command.sh
-    mode: 0700
-  when: inventory_hostname == "192.168.0.136"
-  become: yes
+- set_fact:
+    kubeadm_join: "{{ join_command.stdout }}"
 
-- name: Copy join command file from master to worker nodes
-  fetch:
-    src: /opt/kubernetes/kubeadm_join_command.sh
-    dest: /opt/kubernetes/kubeadm_join_command.sh
-    flat: yes
-  when: inventory_hostname != "192.168.0.136"
-  become: yes
-
-- name: Join worker nodes to cluster
-  shell: bash /opt/kubernetes/kubeadm_join_command.sh
+- name: Run kubeadm join
+  shell: "{{ kubeadm_join }} --ignore-preflight-errors=swap"
   when: inventory_hostname != "192.168.0.136"
   become: yes

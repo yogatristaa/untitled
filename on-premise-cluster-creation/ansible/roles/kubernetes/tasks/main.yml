@@ -80,7 +80,7 @@
   become: yes
 
 - set_fact:
-    kubeadm_join: "{{ join_command.stdout }}"
+    kubeadm_join: "{{ join_command.stdout if join_command is defined else '' }}"
 
 - name: Run kubeadm join
   shell: "{{ kubeadm_join }} --ignore-preflight-errors=swap"

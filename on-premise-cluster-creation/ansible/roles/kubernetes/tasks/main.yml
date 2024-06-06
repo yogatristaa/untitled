@@ -82,6 +82,14 @@
   become: yes
   delay: 5
 
+- name: Create directory for join command on worker nodes
+  file:
+    path: ~/opt/kubernetes
+    state: directory
+    mode: '0755'
+  when: inventory_hostname != "192.168.0.136"
+  become: yes
+
 - name: Copy join command file from master to worker nodes
   fetch:
     src: ~/opt/kubernetes/kubeadm_join_command.sh

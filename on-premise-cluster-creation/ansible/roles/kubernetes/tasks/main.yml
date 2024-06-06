@@ -80,7 +80,7 @@
     state: present
   when: inventory_hostname == "192.168.0.136"
   become: yes
-  register: join_command_file  # Register the saved file path
+  delay: 5
 
 - name: Copy join command file from master to worker nodes
   copy:
@@ -89,15 +89,6 @@
     remote_src: yes
     delegate_to: 192.168.0.136
   when: inventory_hostname != "192.168.0.136"
-  become: yes
-
-- name: Wait for join command file to exist (optional)
-  wait_for:
-    path: /opt/kubernetes/kubeadm_join_command.sh
-    state: present
-  when: inventory_hostname != "192.168.0.136"
-  # Increase timeout (optional)
-  timeout: 60  # Wait for up to 60 seconds (default is 10)
   become: yes
 
 - name: Join worker nodes to cluster

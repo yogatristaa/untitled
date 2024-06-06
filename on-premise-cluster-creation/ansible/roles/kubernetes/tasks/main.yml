@@ -72,12 +72,22 @@
   when: inventory_hostname == "192.168.0.136"
   become: yes
 
-- name: Copy join command file to worker nodes
+- name: Save join command to a file on master
   copy:
     content: "{{ join_command.stdout }}"
-    dest: /opt/kubernetes/kubeadm_join_command.sh
-    remote_src: no  # Not remote source, generated locally
-  when: inventory_hostname != "192.168.0.136"  # Skip master node
+    dest: ~/opt/kubernetes/kubeadm_join_command.sh
+    mode: 0700
+    state: present
+  when: inventory_hostname == "192.168.0.136"
+  become: yes
+  delay: 5
+
+- name: Copy join command file from master to worker nodes
+  fetch:
+    src: ~/opt/kubernetes/kubeadm_join_command.sh
+    dest: ~/opt/kubernetes/kubeadm_join_command.sh
+    remote_src: yes
+  when: inventory_hostname != "192.168.0.136"
   become: yes
 
 - name: Join worker nodes to cluster

@@ -76,6 +76,8 @@
   copy:
     content: "{{ join_command.stdout }}"
     dest: /opt/kubernetes/kubeadm_join_command.sh
+    mode: 0700
+    state: present
   when: inventory_hostname == "192.168.0.136"
   become: yes
 

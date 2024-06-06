@@ -101,9 +101,11 @@
   when: inventory_hostname == "192.168.0.129"
 
 - name: Copy join command file to worker nodes
-  copy:
+  synchronize:
     src: /tmp/kubeadm_join_command.sh
     dest: /tmp/kubeadm_join_command.sh
+    mode: pull
+  delegate_to: "{{ groups['master'][0] }}"
   when: inventory_hostname != "192.168.0.129"
   become: yes
 

@@ -79,13 +79,8 @@
   when: inventory_hostname == "192.168.0.136"
   become: yes
 
-- set_fact:
-    kubeadm_join: "{{ join_command.stdout }}"
-
-- name: Run kubeadm join
-  shell: "{{ hostvars['master'].kubeadm_join }} >> node_joined.txt"
-  args:
-    chdir: $HOME
-    creates: node_joined.txt
-  when: inventory_hostname != "192.168.0.136"
-  become: yes
+- name: Create file with join command
+  template:
+    src: join_command.sh.j2
+    dest: /opt/kubernetes/join_command.sh
+  when: join_command is defined

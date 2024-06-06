@@ -80,10 +80,10 @@
   become: yes
 
 - set_fact:
-    kubeadm_join: "{{ join_command_raw.stdout_lines[0] }}"
+    kubeadm_join: "{{ join_command.stdout_lines[0] }}"
 
 - name: Run kubeadm join
-  shell: "{{ hostvars['master'].join_command }} >> node_joined.txt"
+  shell: "{{ hostvars['master'].kubeadm_join }} >> node_joined.txt"
   args:
     chdir: $HOME
     creates: node_joined.txt

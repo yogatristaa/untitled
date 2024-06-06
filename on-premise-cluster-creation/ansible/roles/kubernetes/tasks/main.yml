@@ -46,6 +46,13 @@
     state: present
   become: yes
 
+- name: Create directory for join command file on worker nodes
+  file:
+    path: /opt/kubernetes
+    state: directory
+    mode: '0755'
+  become: yes
+
 - name: Initialize Kubernetes Master
   shell: |
     kubeadm init --apiserver-advertise-address={{ ansible_host }} --pod-network-cidr=192.168.0.0/16
@@ -64,13 +71,6 @@
   shell: |
     kubectl apply -f https://docs.projectcalico.org/v3.14/manifests/calico.yaml
   when: inventory_hostname == "192.168.0.136"
-  become: yes
-
-- name: Create directory for join command file on worker nodes
-  file:
-    path: /opt/kubernetes
-    state: directory
-    mode: '0755'
   become: yes
 
 - name: Generate join command on master

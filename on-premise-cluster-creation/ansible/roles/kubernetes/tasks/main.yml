@@ -74,7 +74,7 @@
   become: yes
 
 - name: Generate and print join command on master
-  shell: kubeadm token create --print-join-command
+  shell: kubeadm token create --print-join-command --control-plane-endpoint="192.168.0.136:6443"
   register: join_command
   when: inventory_hostname == "192.168.0.136"
   become: yes

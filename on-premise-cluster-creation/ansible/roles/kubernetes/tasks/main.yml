@@ -66,6 +66,13 @@
   when: inventory_hostname == "192.168.0.136"
   become: yes
 
+- name: Create directory for join command file on worker nodes
+  file:
+    path: /opt/kubernetes
+    state: directory
+    mode: '0755'
+  become: yes
+
 - name: Generate join command on master
   shell: kubeadm token create --print-join-command
   register: join_command

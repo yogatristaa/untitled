@@ -83,11 +83,10 @@
   delay: 5
 
 - name: Copy join command file from master to worker nodes
-  copy:
+  fetch:
     src: /opt/kubernetes/kubeadm_join_command.sh
     dest: /opt/kubernetes/kubeadm_join_command.sh
     remote_src: yes
-    delegate_to: 192.168.0.136
   when: inventory_hostname != "192.168.0.136"
   become: yes
 

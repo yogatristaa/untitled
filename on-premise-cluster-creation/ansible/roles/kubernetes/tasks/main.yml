@@ -84,7 +84,7 @@
 
 - name: Copy join command file from master to worker nodes
   fetch:
-  src: ~/opt/kubernetes/kubeadm_join_command.sh
+    src: ~/opt/kubernetes/kubeadm_join_command.sh
     dest: ~/opt/kubernetes/kubeadm_join_command.sh
     remote_src: yes
   when: inventory_hostname != "192.168.0.136"

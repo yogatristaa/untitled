@@ -86,14 +86,7 @@
     content: "{{ join_command.stdout }}"
     dest: /opt/kubernetes/kubeadm_join_command.sh
     mode: 0700
-  delegate_to: localhost
   run_once: true
-  when: "'master' in group_names"
-
-- name: Get join command from master to local
-  fetch:
-    src: /opt/kubernetes/kubeadm_join_command.sh
-    dest: /opt/kubernetes/kubeadm_join_command.sh]
   when: "'master' in group_names"
 
 - name: Copy join command file from master to worker nodes

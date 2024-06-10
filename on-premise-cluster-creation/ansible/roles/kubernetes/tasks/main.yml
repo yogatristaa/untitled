@@ -86,8 +86,7 @@
     join_command: "{{ join_command_raw.stdout }}"
   when: "'master' in group_names"
 
-- name: worker
-  debug:
+- name: Join Cluster
   shell: "{{ hostvars['master1'].join_command }}"
   when: "'worker' in group_names"
   become: yes

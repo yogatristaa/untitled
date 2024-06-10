@@ -88,6 +88,6 @@
 
 - name: Join Cluster
   shell: "{{ hostvars['master'][0].join_command }}"
-  when: "'workers' in group_names"
+  when: "'worker' in group_names"
   become: yes
   tags: join_cluster

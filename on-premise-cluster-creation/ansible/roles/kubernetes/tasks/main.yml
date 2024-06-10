@@ -50,12 +50,13 @@
     path: /opt/kubernetes
     state: directory
     mode: '0755'
+  when: "'worker' in group_names"
   become: yes
 
 - name: Initialize Kubernetes Master
   shell: |
     kubeadm init --apiserver-advertise-address={{ ansible_host }} --pod-network-cidr=192.168.0.0/16
-  when: inventory_hostname == "master"
+  when: "'master' in group_names"
   become: yes
 
 - name: Set up kubeconfig for root
@@ -63,24 +64,42 @@
     mkdir -p $HOME/.kube
     cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
     chown $(id -u):$(id -g) $HOME/.kube/config
-  when: inventory_hostname == "master"
+  when: "'master' in group_names"
   become: yes
 
 - name: Install Calico network plugin
   shell: |
     kubectl apply -f https://docs.projectcalico.org/v3.14/manifests/calico.yaml
-  when: inventory_hostname == "master"
+  when: "'master' in group_names"
   become: yes
 
 - name: Generate and print join command on master
   shell: kubeadm token create --print-join-command
   register: join_command
-  when: inventory_hostname == "master"
+  when: "'master' in group_names"
   become: yes
   changed_when: false
   ignore_errors: true
   tags: generate_join_command
 
+- name: Save join command to a file from master
+  copy:
+    content: "{{ join_command.stdout }}"
+    dest: /opt/kubernetes/kubeadm_join_command.sh
+    mode: 0700
+  when: "'master' in group_names"
+
+- name: Copy join command file from master to worker nodes
+  copy:
+    src: /opt/kubernetes/kubeadm_join_command.sh
+    dest: /opt/kubernetes/kubeadm_join_command.sh
+    remote_src: yes
+  when: inventory_hostname != "192.168.0.136"
+
+- name: Join worker nodes to cluster
+  shell: bash /opt/kubernetes/kubeadm_join_command.sh
+  when: inventory_hostname != "192.168.0.136"
+
 - debug:
     msg: "Join command: {{ join_command.stdout }}"
-  when: inventory_hostname == "master"
+  when: "'master' in group_names"

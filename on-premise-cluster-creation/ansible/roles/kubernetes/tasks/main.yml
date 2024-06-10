@@ -81,15 +81,13 @@
   ignore_errors: true
   tags: generate_join_command
 
-- name: Set Join Command
-  hosts: master
+- hosts: master
   tasks:
     - name: Join Command
       set_fact:
         join_command: "{{ join_command_raw.stdout }}"
 
-- name: Debug
-  hosts: worker
+- hosts: worker
   tasks:
     - name: Print Debug
       debug:

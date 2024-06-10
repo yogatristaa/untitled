@@ -88,7 +88,7 @@
 
 - name: worker
   debug:
-    msg: "{{ hostvars[inventory_hostname] }}"
+    msg: "{{ hostvars['master1'] }}"
   # shell: "{{ hostvars['master'][0].join_command }}"
   # when: "'worker' in group_names"
   # become: yes

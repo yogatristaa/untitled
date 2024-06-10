@@ -69,7 +69,7 @@
 
 - name: Install Calico network plugin
   shell: |
-    kubectl apply -f https://docs.projectcalico.org/v3.14/manifests/calico.yaml
+    kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/calico.yaml
   when: "'master' in group_names"
   become: yes
 
@@ -94,11 +94,11 @@
     src: /opt/kubernetes/kubeadm_join_command.sh
     dest: /opt/kubernetes/kubeadm_join_command.sh
     remote_src: yes
-  when: inventory_hostname != "192.168.0.136"
+  when: "'worker' in group_names"
 
 - name: Join worker nodes to cluster
   shell: bash /opt/kubernetes/kubeadm_join_command.sh
-  when: inventory_hostname != "192.168.0.136"
+  when: "'worker' in group_names"
 
 - debug:
     msg: "Join command: {{ join_command.stdout }}"

@@ -81,17 +81,14 @@
   ignore_errors: true
   tags: generate_join_command
 
-- hosts: master
-  tasks:
-    - name: Join Command
-      set_fact:
-        join_command: "{{ join_command_raw.stdout }}"
+- name: Set Join Command
+  hosts: master
+  set_fact:
+    join_command: "{{ join_command_raw.stdout }}"
 
-- hosts: worker
-  tasks:
-    - name: Print Debug
-      debug:
-        msg: "{{ hostvars[inventory_hostname]}}"
+- name: worker
+  debug:
+    msg: "{{ hostvars[inventory_hostname] }}"
   # shell: "{{ hostvars['master'][0].join_command }}"
   # when: "'worker' in group_names"
   # become: yes

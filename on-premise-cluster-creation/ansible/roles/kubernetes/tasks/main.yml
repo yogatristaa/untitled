@@ -86,6 +86,8 @@
     content: "{{ join_command.stdout }}"
     dest: /opt/kubernetes/kubeadm_join_command.sh
     mode: 0700
+  delegate_to: localhost
+  run_once: true
   when: "'master' in group_names"
 
 - name: Get join command from master to local
@@ -99,6 +101,7 @@
     src: /opt/kubernetes/kubeadm_join_command.sh
     dest: /opt/kubernetes/kubeadm_join_command.sh
     remote_src: yes
+  delegate_to: "{{ groups['master'][0] }}"
   when: "'worker' in group_names"
 
 - name: Join worker nodes to cluster

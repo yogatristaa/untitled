@@ -88,12 +88,14 @@
     mode: 0700
   when: "'master' in group_names"
 
-- name: Copy join command file from master to worker nodes
-  copy:
-    src: /opt/kubernetes/kubeadm_join_command.sh
-    dest: /opt/kubernetes/kubeadm_join_command.sh
-    remote_src: yes
+- name: Copy join command file to worker nodes
+  synchronize:
+    src: /tmp/kubeadm_join_command.sh
+    dest: /tmp/kubeadm_join_command.sh
+    mode: pull
+  delegate_to: "{{ groups['master'][0] }}"
   when: "'worker' in group_names"
+  become: yes
 
 - name: Join worker nodes to cluster
   shell: bash /opt/kubernetes/kubeadm_join_command.sh

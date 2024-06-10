@@ -88,6 +88,11 @@
     mode: 0700
   when: "'master' in group_names"
 
+- name: Get join command from master to local
+  fetch:
+    src: /opt/kubernetes/kubeadm_join_command.sh
+    dest: /opt/kubernetes/kubeadm_join_command.sh
+
 - name: Copy join command file from master to worker nodes
   copy:
     src: /opt/kubernetes/kubeadm_join_command.sh
@@ -99,7 +104,3 @@
 - name: Join worker nodes to cluster
   shell: bash /opt/kubernetes/kubeadm_join_command.sh
   when: "'worker' in group_names"
-
-- debug:
-    msg: "Join command: {{ join_command.stdout }}"
-  when: "'master' in group_names"

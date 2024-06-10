@@ -95,3 +95,4 @@
     dest: /opt/kubernetes/kubeadm_join_command.sh
     flat: yes
   when: "'master' in group_names"
+  become: yes

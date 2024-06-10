@@ -67,9 +67,9 @@
   when: "'master' in group_names"
   become: yes
 
-- name: Install Calico network plugin
+- name: Install Pod Network
   shell: |
-    kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/calico.yaml
+    kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
   when: "'master' in group_names"
   become: yes
 

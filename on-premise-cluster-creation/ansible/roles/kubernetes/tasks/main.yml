@@ -98,8 +98,6 @@
   copy:
     src: /opt/kubernetes/kubeadm_join_command.sh
     dest: /opt/kubernetes/kubeadm_join_command.sh
-    remote_src: yes
-  delegate_to: "{{ groups['master'][0] }}"
   when: "'worker' in group_names"
 
 - name: Join worker nodes to cluster

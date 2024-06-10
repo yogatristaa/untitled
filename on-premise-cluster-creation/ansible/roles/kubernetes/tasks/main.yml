@@ -52,11 +52,11 @@
     mode: '0755'
   become: yes
 
-# - name: Initialize Kubernetes Master
-#   shell: |
-#     kubeadm init --apiserver-advertise-address={{ ansible_host }} --pod-network-cidr=192.168.0.0/16
-#   when: "'master' in group_names"
-#   become: yes
+- name: Initialize Kubernetes Master
+  shell: |
+    kubeadm init --apiserver-advertise-address={{ ansible_host }} --pod-network-cidr=192.168.0.0/16
+  when: "'master' in group_names"
+  become: yes
 
 - name: Set up kubeconfig for root
   shell: |
@@ -66,11 +66,11 @@
   when: "'master' in group_names"
   become: yes
 
-# - name: Install Pod Network
-#   shell: |
-#     kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
-#   when: "'master' in group_names"
-#   become: yes
+- name: Install Pod Network
+  shell: |
+    kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
+  when: "'master' in group_names"
+  become: yes
 
 - name: Generate and print join command on master
   shell: kubeadm token create --print-join-command

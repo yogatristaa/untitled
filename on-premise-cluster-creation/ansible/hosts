@@ -1,6 +1,6 @@
 [master]
-192.168.56.11 ansible_port=22 ansible_user=ubuntu ansible_become=yes ansible_become_method=sudo ansible_ssh_common_args='-o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts'
+master1 192.168.56.11 ansible_port=22 ansible_user=ubuntu ansible_become=yes ansible_become_method=sudo ansible_ssh_common_args='-o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts'
 
 [worker]
-192.168.56.12 ansible_port=22 ansible_user=ubuntu ansible_become=yes ansible_become_method=sudo ansible_ssh_common_args='-o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts'
-192.168.56.13 ansible_port=22 ansible_user=ubuntu ansible_become=yes ansible_become_method=sudo ansible_ssh_common_args='-o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts'
+worker1 192.168.56.12 ansible_port=22 ansible_user=ubuntu ansible_become=yes ansible_become_method=sudo ansible_ssh_common_args='-o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts'
+worker2 192.168.56.13 ansible_port=22 ansible_user=ubuntu ansible_become=yes ansible_become_method=sudo ansible_ssh_common_args='-o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts'

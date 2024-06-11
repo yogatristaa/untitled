@@ -54,7 +54,7 @@
 
 - name: Initialize Kubernetes Master
   shell: |
-    kubeadm init --apiserver-advertise-address={{ ansible_host }} --pod-network-cidr=192.168.0.0/16
+    kubeadm init --apiserver-advertise-address={{ ansible_host }} --pod-network-cidr=10.244.0.0/16
   when: "'master' in group_names"
   become: yes
 
@@ -68,7 +68,7 @@
 
 - name: Install Pod Network
   shell: |
-    kubectl apply -f kube-flannel.yml
+    kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
   when: "'master' in group_names"
   become: yes
 

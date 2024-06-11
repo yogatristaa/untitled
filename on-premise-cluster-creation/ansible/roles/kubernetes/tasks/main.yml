@@ -66,15 +66,15 @@
   when: "'master' in group_names"
   become: yes
 
-- name: Send kube-flannel.yaml to master
-  copy:
-    src: /home/ubuntu/untitled/on-premise-cluster-creation/kube-flannel.yaml 
-    dest: /opt/kubernetes/kube-flannel.yaml 
-  when: "'master' in group_names"
+# - name: Send kube-flannel.yaml to master
+#   copy:
+#     src: /home/ubuntu/untitled/on-premise-cluster-creation/kube-flannel.yaml 
+#     dest: /opt/kubernetes/kube-flannel.yaml 
+#   when: "'master' in group_names"
 
 - name: Install Pod Network
   shell: |
-    kubectl apply -f /opt/kubernetes/kube-flannel.yaml
+    kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
   when: "'master' in group_names"
   become: yes
 
